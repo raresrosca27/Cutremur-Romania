@@ -296,16 +296,17 @@ function ago(ts){const s=(Date.now()-ts)/1000,f=new Intl.RelativeTimeFormat(loc(
 const when=ts=>new Intl.DateTimeFormat(loc(),{timeZone:"Europe/Bucharest",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(ts);
 const region=r=>r?r.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):"";
 
+function tget(u){const c=new AbortController(),k=setTimeout(()=>c.abort(),12000);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(k))}
 async function emsc(){
  const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
- const r=await fetch(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlat=${B.s}&maxlat=${B.n}&minlon=${B.w}&maxlon=${B.e}&start=${st}&limit=1500&orderby=time`);
+ const r=await tget(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlat=${B.s}&maxlat=${B.n}&minlon=${B.w}&maxlon=${B.e}&start=${st}&limit=1500&orderby=time`);
  if(r.status===204)return[];if(!r.ok)throw new Error("emsc");
  const j=await r.json();
  return j.features.map(f=>{const p=f.properties;let s=String(p.time);if(!/Z$|[+-]\d\d:?\d\d$/.test(s))s+="Z";
   return{id:p.unid,t:Date.parse(s),lat:+p.lat,lon:+p.lon,d:Math.abs(+p.depth||0),m:+p.mag,mt:p.magtype||"",reg:p.flynn_region||"",src:"EMSC",url:"https://www.seismicportal.eu/eventdetails.html?unid="+encodeURIComponent(p.unid)}})}
 async function usgs(){
  const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
- const r=await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${st}&minlatitude=${B.s}&maxlatitude=${B.n}&minlongitude=${B.w}&maxlongitude=${B.e}&orderby=time`);
+ const r=await tget(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${st}&minlatitude=${B.s}&maxlatitude=${B.n}&minlongitude=${B.w}&maxlongitude=${B.e}&orderby=time`);
  if(!r.ok)throw new Error("usgs");const j=await r.json();
  return j.features.map(f=>({id:f.id,t:f.properties.time,lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],d:Math.abs(f.geometry.coordinates[2]||0),m:+f.properties.mag,mt:f.properties.magType||"",reg:f.properties.place||"",src:"USGS",url:f.properties.url}))}
 function demo(){let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647,out=[],now=Date.now();
