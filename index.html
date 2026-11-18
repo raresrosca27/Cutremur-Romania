@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seismograf România</title>
+<meta name="description" content="Cutremure în România și în împrejurimi, în timp real. Hartă live, istoric și ghid de siguranță.">
+<meta name="theme-color" content="#d0021b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE  calm civic instrument; urgent only where the numbers are
+   IDEA   a seismograph drum: white paper, graphite ink, one red needle
+   PICTURE live map of Romania with every quake, plus the trace under the latest magnitude
+   COLOUR/TYPE white or night graphite, ink, needle red; Archivo numerals + Inter
+   LAYOUT latest event + map in the first screen, controls, list, daily activity, safety, history */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0f1113);--ink:light-dark(#121417,#eceef0);--mute:light-dark(#5b626b,#9aa3ad);
+--zone:light-dark(#f2f4f5,#171a1e);--line:light-dark(#dde1e5,#2a2f35);--red:light-dark(#d0021b,#ff4d5e);
+--land:light-dark(#e8ebee,#1e2228);--edge:light-dark(#8f98a2,#56606a);--card:light-dark(#ffffff,#14171a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.num{font-family:Archivo,Inter,sans-serif;letter-spacing:-.01em}
+h1{font-size:clamp(30px,4.4vw,48px);line-height:1.05;margin:0 0 10px;text-wrap:balance}
+h2{font-size:clamp(26px,3vw,36px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+h3{font-size:19px;margin:0 0 8px}
+a{color:inherit;text-underline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.zone{background:var(--zone)}
+.lead{color:var(--mute);max-width:62ch;margin:0}
+html{scroll-padding-top:72px;scroll-behavior:smooth}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;padding:10px max(5vw,16px);max-width:1240px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:9px;font:800 19px Archivo,sans-serif;text-decoration:none;flex:none}
+.logo small{font:500 13px Inter,sans-serif;color:var(--mute)}
+nav{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+nav a{flex:none;text-decoration:none;padding:10px 12px;border-radius:10px;color:var(--mute);font-weight:500;font-size:15px}
+nav a:hover{background:var(--zone);color:var(--ink)}
+.lang{flex:none;border:1px solid var(--line);background:var(--card);border-radius:10px;min-height:44px;padding:0 12px;font-weight:600;cursor:pointer}
+
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(16px,3vw,40px);align-items:stretch;margin-top:22px}
+.latest{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.kicker{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--mute);font-weight:600;font-size:14px}
+.kicker button{border:0;background:var(--zone);border-radius:999px;padding:8px 12px;cursor:pointer;font-size:14px;min-height:36px}
+.mag{display:flex;align-items:baseline;gap:10px}
+.mag .num{font-size:clamp(64px,9vw,104px);font-weight:800;line-height:.9;color:var(--red)}
+.mag span{font:600 15px Inter;color:var(--mute)}
+.place{font:600 21px/1.25 Archivo,sans-serif}
+.when{color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--zone);border-radius:999px;padding:5px 11px;font-size:14px;white-space:nowrap}
+.chip.v{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red);font-weight:600}
+.trace{width:100%;height:56px;display:block}
+.trace path{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.stats b{display:block;font:800 26px Archivo,sans-serif}
+.stats small{color:var(--mute);font-size:13px;line-height:1.3;display:block}
+.ev-link{font-weight:600;font-size:15px}
+.feltbtn{width:100%;min-height:50px;border:0;border-radius:14px;background:var(--red);color:#fff;font:700 17px Archivo,sans-serif;cursor:pointer}
+.felt{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--zone)}
+.felt p{margin:0 0 10px;font-size:14px;color:var(--mute)}
+.felt .top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;margin-bottom:8px}
+.felt .top button,.felt .chg{border:0;background:none;color:var(--mute);min-height:40px;padding:0 6px;cursor:pointer;font-weight:600;text-decoration:underline}
+.lv{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 10px;margin-top:6px;cursor:pointer;min-height:52px}
+.lv:hover{border-color:var(--ink)}
+.lv i{display:flex;gap:2px;align-items:end;height:22px}.lv i s{display:block;width:6px;border-radius:2px;background:var(--line)}.lv i s.on{background:var(--red)}
+.lv b{display:block;font-size:15px}.lv small{display:block;color:var(--mute);font-size:13px;line-height:1.3}
+.felt.done b{color:var(--red)}
+.ftag{color:var(--red);font-weight:600}
+
+.mapbox{background:var(--zone);border-radius:20px;padding:10px;position:relative;display:flex;flex-direction:column}
+#map{width:100%;height:auto;display:block;aspect-ratio:739/530}
+#map .land{fill:var(--land);stroke:var(--edge);stroke-width:2}
+#map .vz{fill:color-mix(in srgb,var(--red) 10%,transparent);stroke:var(--red);stroke-dasharray:6 6;stroke-width:1.5}
+#map .cdot{fill:var(--ink)}
+#map .clab{fill:var(--ink);font:600 21px Inter,sans-serif;paint-order:stroke;stroke:var(--zone);stroke-width:5px}
+#map .vlab{fill:var(--red);font:700 19px Inter,sans-serif;paint-order:stroke;stroke:var(--zone);stroke-width:5px}
+#map .q{stroke:var(--card);stroke-width:2;cursor:pointer}
+#map .sel{fill:none;stroke:var(--ink);stroke-width:3}
+#map .pulse{fill:none;stroke:var(--red);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
+@keyframes pulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(3)}}
+@media(prefers-reduced-motion:reduce){#map .pulse{animation:none;opacity:0}html{scroll-behavior:auto}}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mute);padding:6px 8px 2px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+.notice{margin-top:16px;border:1px dashed var(--red);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--mute)}
+.notice[hidden]{display:none}
+.controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;margin:6px 0 18px}
+.ctl label{display:block;font-size:13px;color:var(--mute);font-weight:600;margin-bottom:5px}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;min-height:40px;padding:0 13px;border-radius:9px;cursor:pointer;font-weight:500;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+select{min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:0 12px;font-size:16px}
+.upd{margin-left:auto;display:flex;align-items:center;gap:10px;color:var(--mute);font-size:14px}
+.upd button{border:1px solid var(--line);background:var(--card);border-radius:12px;min-height:44px;padding:0 14px;cursor:pointer;font-weight:600}
+
+.cols{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:clamp(16px,3vw,40px);align-items:start}
+.list{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;width:100%;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px 12px;cursor:pointer}
+.row:hover,.row.on{border-color:var(--ink)}
+.badge{height:46px;border-radius:11px;display:grid;place-items:center;font:800 19px Archivo,sans-serif;color:#fff}
+.row .p{font-weight:600;line-height:1.3}
+.row .s{font-size:14px;color:var(--mute)}
+.row .r{text-align:right;font-size:14px;color:var(--mute);white-space:nowrap}
+.more,.empty{border:1px solid var(--line);background:var(--card);border-radius:12px;min-height:44px;cursor:pointer;font-weight:600;margin-top:6px}
+.empty{cursor:default;padding:18px;text-align:center;color:var(--mute);font-weight:500}
+.side{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.days{display:flex;align-items:end;gap:2px;height:110px;margin-top:8px}
+.days div{flex:1;background:var(--edge);border-radius:2px 2px 0 0;min-height:2px}
+.days div.hi{background:var(--red)}
+.axis{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-top:4px}
+.dist div{display:grid;grid-template-columns:52px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:14px;margin:6px 0}
+.dist i{display:block;height:12px;border-radius:3px}
+.dist b{text-align:right;font-weight:600}
+
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
+.tip{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--line)}
+.tip h3{display:flex;align-items:center;gap:10px}
+.tip h3 span{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:15px;flex:none}
+.tip ul{margin:0;padding-left:18px}.tip li{margin:7px 0}
+.sos{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;background:var(--red);color:#fff;border-radius:16px;padding:16px 20px}
+.sos .num{font-size:38px;font-weight:800;line-height:1}
+.sos a{color:#fff;font-weight:600}
+
+table{width:100%;border-collapse:collapse;margin-top:18px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--mute);font-weight:600}
+td.n{text-align:right;white-space:nowrap;font:800 20px Archivo,sans-serif;color:var(--red)}
+td.y{font:800 20px Archivo,sans-serif;white-space:nowrap}
+
+footer{border-top:1px solid var(--line)}
+footer p{color:var(--mute);font-size:14px;max-width:80ch}
+.srcs{display:flex;flex-wrap:wrap;gap:8px 20px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;z-index:9;max-width:calc(100% - 32px);box-shadow:0 8px 30px #0004}
+.toast[hidden]{display:none}
+
+@media(max-width:900px){.hero,.cols{grid-template-columns:minmax(0,1fr)}.three{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+ .logo small{display:none}.upd{margin-left:0;width:100%;justify-content:space-between}
+ .row{grid-template-columns:50px minmax(0,1fr)}.row .r{grid-column:2;text-align:left}
+ .badge{height:42px;font-size:17px}.latest{padding:18px}
+ table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}
+ .stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}
+ .stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;white-space:normal;font:600 13px Inter;color:var(--mute)}
+ .stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header>
+ <div class="bar">
+  <a class="logo" href="#live" aria-label="Seismograf">
+   <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="var(--red)"/><path d="M4 16h5l2-6 3 12 3-15 3 13 2-4h4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+   Seismograf <small>România</small>
+  </a>
+  <nav id="nav"></nav>
+  <button class="lang" id="lang" type="button"></button>
+ </div>
+</header>
+
+<main>
+<section class="band" id="live">
+ <div class="wrap">
+  <h1 data-i="h1"></h1>
+  <p class="lead" data-i="lead"></p>
+  <div class="notice" id="notice" hidden></div>
+  <div class="hero">
+   <article class="latest" id="latest" aria-live="polite"></article>
+   <div class="mapbox">
+    <svg id="map" viewBox="0 0 739 530" role="img" aria-label="Map"></svg>
+    <div class="legend" id="legend"></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="band zone" id="list">
+ <div class="wrap">
+  <h2 data-i="listT"></h2>
+  <div class="controls">
+   <div class="ctl"><label data-i="period"></label><div class="seg" id="per"></div></div>
+   <div class="ctl"><label data-i="minmag"></label><div class="seg" id="mm"></div></div>
+   <div class="ctl"><label for="city" data-i="city"></label><select id="city"></select></div>
+   <div class="upd"><span id="upd"></span><button type="button" id="refresh" data-i="refresh"></button></div>
+  </div>
+  <div class="cols">
+   <div><div class="list" id="rows"></div></div>
+   <aside class="side">
+    <div class="box"><h3 data-i="daily"></h3><div class="days" id="days"></div><div class="axis"><span data-i="d30ago"></span><span data-i="today"></span></div></div>
+    <div class="box"><h3 data-i="distT"></h3><div class="dist" id="dist"></div></div>
+   </aside>
+  </div>
+ </div>
+</section>
+
+<section class="band" id="safety">
+ <div class="wrap">
+  <h2 data-i="safetyT"></h2>
+  <p class="lead" data-i="safetyL"></p>
+  <div class="three" id="tips"></div>
+  <div class="sos"><span class="num">112</span><span data-i="sos"></span><a href="https://fiipregatit.ro" target="_blank" rel="noopener">fiipregatit.ro</a></div>
+ </div>
+</section>
+
+<section class="band zone" id="history">
+ <div class="wrap">
+  <h2 data-i="histT"></h2>
+  <p class="lead" data-i="histL"></p>
+  <table class="stack"><thead><tr><th data-i="thY"></th><th data-i="thM"></th><th data-i="thD"></th><th data-i="thW"></th></tr></thead><tbody id="hist"></tbody></table>
+ </div>
+</section>
+</main>
+
+<footer class="band">
+ <div class="wrap">
+  <h3 data-i="srcT"></h3>
+  <div class="srcs">
+   <a href="https://www.emsc-csem.org" target="_blank" rel="noopener">EMSC</a>
+   <a href="https://earthquake.usgs.gov" target="_blank" rel="noopener">USGS</a>
+   <a href="https://www.infp.ro" target="_blank" rel="noopener">INFP</a>
+   <a href="https://fiipregatit.ro" target="_blank" rel="noopener">Fii pregătit (IGSU)</a>
+  </div>
+  <p data-i="disc"></p>
+ </div>
+</footer>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+{
+const B={s:43.3,n:48.6,w:19.8,e:30.4};
+const CITIES=[["București",44.43,26.10,1],["Cluj-Napoca",46.77,23.59,1],["Iași",47.16,27.59,1],["Timișoara",45.75,21.23,1],["Constanța",44.18,28.63,1],["Brașov",45.65,25.59,1],["Craiova",44.32,23.80,1],["Focșani",45.70,27.18,1],["Chișinău",47.01,28.86,1],["Galați",45.44,28.05,0],["Brăila",45.27,27.96,0],["Ploiești",44.94,26.03,0],["Oradea",47.07,21.92,0],["Sibiu",45.79,24.15,0],["Bacău",46.57,26.91,0],["Arad",46.18,21.31,0],["Pitești",44.86,24.87,0],["Buzău",45.15,26.82,0],["Suceava",47.65,26.25,0],["Baia Mare",47.66,23.58,0],["Târgu Mureș",46.54,24.56,0],["Târgu Jiu",45.04,23.27,0],["Drobeta-Turnu Severin",44.63,22.66,0],["Satu Mare",47.79,22.89,0],["Botoșani",47.75,26.67,0],["Tulcea",45.18,28.80,0],["Deva",45.88,22.91,0],["Râmnicu Vâlcea",45.10,24.37,0],["Piatra Neamț",46.93,26.37,0],["Nehoiu",45.42,26.30,0]];
+const RO=[[20.26,46.11],[20.76,45.75],[21.0,45.4],[21.48,45.18],[21.38,44.87],[21.65,44.66],[22.15,44.48],[22.47,44.7],[22.7,44.53],[22.45,44.3],[22.68,44.2],[22.97,43.85],[23.6,43.8],[24.2,43.68],[24.87,43.71],[25.37,43.63],[25.95,43.87],[26.5,44.05],[27.27,44.13],[27.7,43.97],[28.0,43.82],[28.58,43.74],[28.66,44.0],[28.78,44.35],[28.9,44.6],[29.1,44.78],[29.66,44.83],[29.66,45.21],[29.75,45.38],[29.4,45.44],[28.9,45.29],[28.72,45.22],[28.21,45.47],[28.08,45.9],[28.17,46.3],[28.1,46.75],[27.84,47.2],[27.4,47.6],[27.0,48.05],[26.62,48.26],[26.2,47.98],[25.6,47.93],[25.08,47.75],[24.6,47.95],[24.0,47.96],[23.5,48.0],[22.89,47.95],[22.3,47.73],[22.0,47.5],[21.9,47.35],[21.65,47.0],[21.4,46.7],[21.2,46.4],[20.75,46.24]];
+const T={
+ro:{h1:"Cutremure în România, în timp real",lead:"Date live de la Centrul Seismologic Euro-Mediteranean (EMSC), actualizate automat la fiecare 2 minute. Atinge un cutremur pe hartă sau în listă pentru detalii.",
+nav:["Live","Listă","Siguranță","Istoric"],latest:"Ultimul cutremur",selected:"Cutremur selectat",back:"Înapoi la ultimul",depth:"Adâncime",vr:"Vrancea · adâncime intermediară",c24:"cutremure în ultimele 24 h",c7:"cutremure în ultimele 7 zile",max30:"magnitudine maximă, 30 de zile",open:"Detalii la sursă",felt:"Am simțit acest cutremur",feltQ:"Cât de puternic l-ai simțit?",cancel:"Renunță",youFelt:"Ai raportat",change:"Schimbă",feltTag:"simțit de tine",feltNote:"Răspunsul tău rămâne salvat pe acest dispozitiv. Ca să-i ajuți pe seismologi, trimite-l și la EMSC (site sau aplicația LastQuake):",emsc:"Trimite raportul oficial la EMSC",lv:[["Abia perceptibil","Doar o vibrație slabă, observată de puțini"],["Ușor","Obiectele și geamurile au vibrat ușor"],["Moderat","Mulți l-au simțit, obiectele s-au mișcat"],["Puternic","Greu de stat în picioare, au căzut obiecte"],["Foarte puternic","Fisuri sau alte pagube la clădire"]],
+listT:"Toate cutremurele din zonă",period:"Perioadă",per:["24 h","7 zile","30 de zile"],minmag:"Magnitudine minimă",all:"Toate",city:"Orașul meu",refresh:"Actualizează",updated:"Actualizat la",loading:"Se încarcă…",
+noEv:"Niciun cutremur pentru filtrele alese. E o veste bună.",more:"Arată mai multe",fromYou:"de",daily:"Activitate zilnică, 30 de zile",d30ago:"acum 30 de zile",today:"azi",distT:"După magnitudine (perioada aleasă)",
+legend:["sub 2","2–3","3–4","4–5","5+"],vz:"Zona Vrancea",near:"lângă",of:"de",dirs:["N","NE","E","SE","S","SV","V","NV"],
+sample:"Date demonstrative: această previzualizare nu poate încărca date externe. Pe site-ul publicat, cutremurele se încarcă live de la EMSC (cu USGS ca rezervă).",
+err:"Nu am putut încărca date noi. Afișăm ultimele date disponibile.",newq:"Cutremur nou",
+safetyT:"Ce faci la cutremur",safetyL:"Cutremurele nu pot fi prezise. Pregătirea face diferența, mai ales în București și în zonele expuse cutremurelor din Vrancea.",
+tips:[["Înainte",["Fixează de perete mobilierul înalt, rafturile și boilerul.","Pregătește un rucsac de urgență: apă, lanternă, baterii, trusă medicală, copii după acte.","Stabilește cu familia un punct de întâlnire și o persoană de contact din alt oraș.","Află de unde se închid gazul, apa și curentul."]],["În timpul",["Jos, acoperă-te, ține-te: sub o masă solidă, protejându-ți capul și gâtul.","Stai departe de ferestre, oglinzi și obiecte care pot cădea.","Nu folosi liftul și nu fugi pe scări cât timp clădirea se mișcă.","Afară, depărtează-te de clădiri, stâlpi și cabluri electrice."]],["După",["Verifică-te pe tine și pe cei din jur; acordă primul ajutor.","Dacă miroase a gaz, închide robinetul și nu aprinde flacără sau lumina.","Așteaptă-te la replici. Ieși calm, pe scări, cu încălțăminte în picioare.","Sună la 112 doar pentru urgențe; în rest, trimite mesaje."]]],
+sos:"Număr unic de urgență. Ghiduri oficiale de pregătire:",
+histT:"Marile cutremure din România",histL:"Cele mai puternice cutremure din România vin din zona Vrancea, de la adâncimi de 60–200 km, de aceea se resimt pe suprafețe foarte mari, inclusiv în București.",
+thY:"An",thM:"Magnitudine",thD:"Adâncime",thW:"Ce s-a întâmplat",
+srcT:"Surse de date",disc:"Seismograf nu este un sistem oficial de avertizare și nu poate prezice cutremure. Magnitudinile pot diferi ușor între agenții și se pot actualiza în primele minute. Pentru informații oficiale, urmăriți INFP (Institutul Național pentru Fizica Pământului), IGSU și alertele RO-ALERT."},
+en:{h1:"Earthquakes in Romania, in real time",lead:"Live data from the European-Mediterranean Seismological Centre (EMSC), refreshed automatically every 2 minutes. Tap any earthquake on the map or in the list for details.",
+nav:["Live","List","Safety","History"],latest:"Latest earthquake",selected:"Selected earthquake",back:"Back to latest",depth:"Depth",vr:"Vrancea · intermediate depth",c24:"earthquakes in the last 24 h",c7:"earthquakes in the last 7 days",max30:"highest magnitude, 30 days",open:"Details at source",felt:"I felt this earthquake",feltQ:"How strongly did you feel it?",cancel:"Cancel",youFelt:"You reported",change:"Change",feltTag:"felt by you",feltNote:"Your answer stays saved on this device. To help seismologists, also send it to EMSC (website or the LastQuake app):",emsc:"Send the official report to EMSC",lv:[["Barely noticeable","Only a faint vibration, noticed by few"],["Light","Objects and windows rattled slightly"],["Moderate","Many people felt it, objects moved"],["Strong","Hard to stand, objects fell"],["Very strong","Cracks or other damage to the building"]],
+listT:"All earthquakes in the area",period:"Period",per:["24 h","7 days","30 days"],minmag:"Minimum magnitude",all:"All",city:"My city",refresh:"Refresh",updated:"Updated at",loading:"Loading…",
+noEv:"No earthquakes match these filters. That's good news.",more:"Show more",fromYou:"from",daily:"Daily activity, 30 days",d30ago:"30 days ago",today:"today",distT:"By magnitude (selected period)",
+legend:["under 2","2–3","3–4","4–5","5+"],vz:"Vrancea zone",near:"near",of:"of",dirs:["N","NE","E","SE","S","SW","W","NW"],
+sample:"Sample data: this preview can't load outside data. On the published site, earthquakes load live from EMSC (with USGS as a backup).",
+err:"Couldn't load new data. Showing the last data available.",newq:"New earthquake",
+safetyT:"What to do in an earthquake",safetyL:"Earthquakes can't be predicted. Preparation makes the difference, especially in Bucharest and other areas exposed to Vrancea earthquakes.",
+tips:[["Before",["Anchor tall furniture, shelves and the water heater to the wall.","Pack an emergency bag: water, torch, batteries, first-aid kit, copies of documents.","Agree a meeting point with your family and a contact person in another city.","Learn where to shut off gas, water and electricity."]],["During",["Drop, cover, hold on: under a sturdy table, protecting your head and neck.","Stay away from windows, mirrors and things that can fall.","Don't use the lift or run down the stairs while the building is shaking.","Outdoors, move away from buildings, poles and power lines."]],["After",["Check yourself and people around you; give first aid.","If you smell gas, close the valve and don't light a flame or switch on lights.","Expect aftershocks. Leave calmly by the stairs, wearing shoes.","Call 112 only for emergencies; otherwise send messages."]]],
+sos:"Single emergency number. Official preparedness guides:",
+histT:"Romania's major earthquakes",histL:"Romania's strongest earthquakes come from the Vrancea zone, 60–200 km deep, which is why they are felt over very large areas, including Bucharest.",
+thY:"Year",thM:"Magnitude",thD:"Depth",thW:"What happened",
+srcT:"Data sources",disc:"Seismograf is not an official warning system and cannot predict earthquakes. Magnitudes can differ slightly between agencies and may be revised in the first minutes. For official information, follow INFP (National Institute for Earth Physics), IGSU and RO-ALERT alerts."}};
+const HIST=[["1940","10 nov.","7,7","7.7","~133 km","Cel mai puternic cutremur din secolul XX în România. În București s-a prăbușit blocul Carlton.","The strongest earthquake in 20th-century Romania. The Carlton block in Bucharest collapsed."],
+["1977","4 mar.","7,4","7.4","~94 km","Peste 1.500 de morți, cei mai mulți în București, unde s-au prăbușit zeci de clădiri.","Over 1,500 deaths, most of them in Bucharest, where dozens of buildings collapsed."],
+["1986","30 aug.","7,1","7.1","~131 km","Resimțit puternic în sud-estul României și în Republica Moldova, cu pagube importante.","Strongly felt in south-eastern Romania and the Republic of Moldova, with major damage."],
+["1990","30 mai","6,9","6.9","~90 km","Urmat a doua zi de o replică de 6,4. Au existat victime și pagube.","Followed the next day by a 6.4 aftershock. There were casualties and damage."],
+["2023","14 feb.","5,7 (ML)","5.7 (ML)","crustal","Cel mai puternic dintr-o serie de cutremure de suprafață în Gorj, cu pagube locale în zona Târgu Jiu.","The strongest in a series of shallow earthquakes in Gorj county, with local damage around Târgu Jiu."]];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const get=k=>{try{return localStorage.getItem("sg_"+k)}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem("sg_"+k,v)}catch(e){}};
+let lang=get("lang")==="en"?"en":"ro";
+let city=CITIES.find(c=>c[0]===get("city"))||CITIES[0];
+let per=+(get("per")||1);if(![0,1,2].includes(per))per=1;
+let mm=+(get("mm")||0);
+let felt={};try{felt=JSON.parse(get("felt")||"{}")||{}}catch(e){}
+let fOpen=false;
+let data=[],sample=false,selId=null,shown=40,updated=null,known=null;
+const DAY=864e5,PER=[DAY,7*DAY,30*DAY],MMS=[0,2,3,4];
+const t=()=>T[lang],loc=()=>lang==="ro"?"ro-RO":"en-GB";
+const P=(lat,lon)=>[+((lon-B.w)*69.7).toFixed(1),+((B.n-lat)*100).toFixed(1)];
+const col=m=>m<2?"#8a96a3":m<3?"#e5a800":m<4?"#f07000":m<5?"#e0301e":"#9b0019";
+const fm=(m,d=1)=>Number(m).toLocaleString(loc(),{minimumFractionDigits:d,maximumFractionDigits:d});
+function dist(a1,o1,a2,o2){const r=Math.PI/180,dA=(a2-a1)*r,dO=(o2-o1)*r,h=Math.sin(dA/2)**2+Math.cos(a1*r)*Math.cos(a2*r)*Math.sin(dO/2)**2;return 12742*Math.asin(Math.sqrt(h))}
+function dir(a1,o1,a2,o2){const r=Math.PI/180,y=Math.sin((o2-o1)*r)*Math.cos(a2*r),x=Math.cos(a1*r)*Math.sin(a2*r)-Math.sin(a1*r)*Math.cos(a2*r)*Math.cos((o2-o1)*r);const b=(Math.atan2(y,x)/r+360)%360;return t().dirs[Math.round(b/45)%8]}
+function place(q){let best=CITIES[0],bd=1e9;for(const c of CITIES){const d=dist(c[1],c[2],q.lat,q.lon);if(d<bd){bd=d;best=c}}
+ if(bd<5)return t().near+" "+best[0];return Math.round(bd)+" km "+dir(best[1],best[2],q.lat,q.lon)+" "+t().of+" "+best[0]}
+const isV=q=>q.lat>45.2&&q.lat<46.1&&q.lon>26&&q.lon<27.2&&q.d>=60;
+function ago(ts){const s=(Date.now()-ts)/1000,f=new Intl.RelativeTimeFormat(loc(),{numeric:"auto"});
+ if(s<60)return f.format(0,"minute");if(s<3600)return f.format(-Math.round(s/60),"minute");if(s<86400)return f.format(-Math.round(s/3600),"hour");return f.format(-Math.round(s/86400),"day")}
+const when=ts=>new Intl.DateTimeFormat(loc(),{timeZone:"Europe/Bucharest",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(ts);
+const region=r=>r?r.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):"";
+
+async function emsc(){
+ const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
+ const r=await fetch(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlat=${B.s}&maxlat=${B.n}&minlon=${B.w}&maxlon=${B.e}&start=${st}&limit=1500&orderby=time`);
+ if(r.status===204)return[];if(!r.ok)throw new Error("emsc");
+ const j=await r.json();
+ return j.features.map(f=>{const p=f.properties;let s=String(p.time);if(!/Z$|[+-]\d\d:?\d\d$/.test(s))s+="Z";
+  return{id:p.unid,t:Date.parse(s),lat:+p.lat,lon:+p.lon,d:Math.abs(+p.depth||0),m:+p.mag,mt:p.magtype||"",reg:p.flynn_region||"",src:"EMSC",url:"https://www.seismicportal.eu/eventdetails.html?unid="+encodeURIComponent(p.unid)}})}
+async function usgs(){
+ const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
+ const r=await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${st}&minlatitude=${B.s}&maxlatitude=${B.n}&minlongitude=${B.w}&maxlongitude=${B.e}&orderby=time`);
+ if(!r.ok)throw new Error("usgs");const j=await r.json();
+ return j.features.map(f=>({id:f.id,t:f.properties.time,lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],d:Math.abs(f.geometry.coordinates[2]||0),m:+f.properties.mag,mt:f.properties.magType||"",reg:f.properties.place||"",src:"USGS",url:f.properties.url}))}
+function demo(){let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647,out=[],now=Date.now();
+ const spots=[[45.68,26.58,70,160,.62],[45.03,23.22,5,15,.12],[45.6,21.6,5,15,.08],[44.6,29.4,10,30,.06],[46.5,22.9,5,12,.06],[47.6,23.9,5,12,.06]];
+ for(let i=0;i<70;i++){let x=rnd(),k=0;for(;k<spots.length-1&&x>spots[k][4];k++)x-=spots[k][4];const sp=spots[k];
+  out.push({id:"demo"+i,t:now-rnd()*30*DAY,lat:sp[0]+(rnd()-.5)*.5,lon:sp[1]+(rnd()-.5)*.6,d:sp[2]+rnd()*(sp[3]-sp[2]),m:1.5+rnd()**2.4*2.6,mt:"ml",reg:"Romania",src:"Demo",url:""})}
+ out.push({id:"demoL",t:now-2.6*3600e3,lat:45.72,lon:26.61,d:128,m:3.6,mt:"ml",reg:"Romania",src:"Demo",url:""});
+ return out.sort((a,b)=>b.t-a.t)}
+
+async function load(){
+ $("#upd").textContent=t().loading;let fresh=null;
+ try{fresh=await emsc()}catch(e){try{fresh=await usgs()}catch(e2){}}
+ if(fresh){fresh=fresh.filter(q=>isFinite(q.m)&&isFinite(q.lat)&&isFinite(q.t)).sort((a,b)=>b.t-a.t);
+  if(known&&!sample){const nw=fresh.filter(q=>!known.has(q.id)&&q.m>=2.5);if(nw.length)toast(nw[0])}
+  data=fresh;sample=false;known=new Set(data.map(q=>q.id));updated=Date.now();$("#notice").hidden=true}
+ else if(!data.length){data=demo();sample=true;updated=Date.now();$("#notice").textContent=t().sample;$("#notice").hidden=false}
+ else{$("#notice").textContent=t().err;$("#notice").hidden=false}
+ render()}
+function toast(q){const el=$("#toast");el.textContent=`${t().newq}: M ${fm(q.m)} · ${place(q)}`;el.hidden=false;clearTimeout(toast.k);toast.k=setTimeout(()=>el.hidden=true,8000)}
+
+function filtered(){const lim=Date.now()-PER[per];return data.filter(q=>q.t>=lim&&q.m>=MMS[mm])}
+
+function renderLatest(){
+ const el=$("#latest"),sel=selId&&data.find(q=>q.id===selId),q=sel||data[0];
+ if(!q){el.innerHTML=`<div class="kicker">${t().latest}</div><p>${t().noEv}</p>`;return}
+ let pts="",n=60,amp=Math.min(26,4+q.m*5);for(let i=0;i<=n;i++){const x=i/n*300,e=Math.exp(-(((i-18)/9)**2))+.5*Math.exp(-(((i-30)/14)**2)),y=28+Math.sin(i*1.9)*amp*e*(i%2?1:-.8)+Math.sin(i*.7)*1.2;pts+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}
+ const now=Date.now(),c24=data.filter(q=>q.t>now-DAY).length,c7=data.filter(q=>q.t>now-7*DAY).length,mx=data.reduce((a,q)=>Math.max(a,q.m),0);
+ const dc=Math.round(dist(city[1],city[2],q.lat,q.lon));
+ el.innerHTML=`<div class="kicker"><span>${sel?t().selected:t().latest}</span>${sel?`<button type="button" id="back">${t().back}</button>`:""}</div>
+ <div class="mag"><span class="num" style="color:${q.m>=3?col(q.m):""}">${fm(q.m)}</span><span>${esc(q.mt.toUpperCase()||"M")}</span></div>
+ <div><div class="place">${esc(place(q))}</div><div class="when">${ago(q.t)} · ${when(q.t)}</div></div>
+ <div class="chips"><span class="chip">${t().depth} ${Math.round(q.d)} km</span><span class="chip">${dc} km ${t().fromYou} ${esc(city[0])}</span>${q.reg?`<span class="chip">${esc(region(q.reg))}</span>`:""}${isV(q)?`<span class="chip v">${t().vr}</span>`:""}</div>
+ <svg class="trace" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="${pts}" vector-effect="non-scaling-stroke"/></svg>
+ ${feltBox(q)}
+ ${q.url?`<a class="ev-link" href="${esc(q.url)}" target="_blank" rel="noopener">${t().open} (${q.src}) ↗</a>`:""}
+ <div class="stats"><div><b>${c24}</b><small>${t().c24}</small></div><div><b>${c7}</b><small>${t().c7}</small></div><div><b>${data.length?fm(mx):"–"}</b><small>${t().max30}</small></div></div>`;
+}
+
+function feltBox(q){
+ const v=felt[q.id];
+ if(v!=null&&!fOpen)return`<div class="felt done"><div class="top"><span>${t().youFelt}: <b>${t().lv[v][0]}</b></span><button type="button" data-f="chg">${t().change}</button></div><p>${t().feltNote}</p><a class="ev-link" href="https://www.emsc-csem.org" target="_blank" rel="noopener">${t().emsc} ↗</a></div>`;
+ if(!fOpen)return`<button type="button" class="feltbtn" data-f="open">${t().felt}</button>`;
+ return`<div class="felt"><div class="top"><span>${t().feltQ}</span><button type="button" data-f="x">${t().cancel}</button></div>${t().lv.map((l,i)=>`<button type="button" class="lv" data-lv="${i}"><i>${[0,1,2,3,4].map(k=>`<s class="${k<=i?"on":""}" style="height:${6+k*4}px"></s>`).join("")}</i><span><b>${l[0]}</b><small>${l[1]}</small></span></button>`).join("")}</div>`}
+function renderMap(){
+ const land="M"+RO.map(p=>P(p[1],p[0]).join(" ")).join("L")+"Z";
+ const [vx,vy]=P(45.7,26.6),qs=filtered().slice().sort((a,b)=>b.m-a.m),now=Date.now(),latest=data[0];
+ let h=`<path class="land" d="${land}"/><ellipse class="vz" cx="${vx}" cy="${vy}" rx="42" ry="34"/><text class="vlab" x="${vx+46}" y="${vy+40}">${t().vz}</text>`;
+ for(const c of CITIES){if(!c[3]&&c!==city)continue;const[x,y]=P(c[1],c[2]),me=c===city;const L=c[0]==="Brașov"||c[0]==="Constanța";h+=`<circle class="cdot" cx="${x}" cy="${y}" r="${me?6:4}"${me?' style="fill:var(--red)"':""}/><text class="clab" x="${L?x-9:x+9}" y="${y-8}"${L?' text-anchor="end"':""}>${esc(c[0])}</text>`}
+ for(const q of qs){const[x,y]=P(q.lat,q.lon),r=(4+q.m*q.m*1.15).toFixed(1),op=q.t>now-DAY?1:q.t>now-7*DAY?.8:.5;
+  h+=`<circle class="q" data-id="${esc(q.id)}" cx="${x}" cy="${y}" r="${r}" fill="${col(q.m)}" fill-opacity="${op}"><title>M ${fm(q.m)} · ${esc(place(q))}</title></circle>`}
+ if(latest&&latest.t>now-DAY){const[x,y]=P(latest.lat,latest.lon);h+=`<circle class="pulse" cx="${x}" cy="${y}" r="${(4+latest.m**2*1.15).toFixed(1)}"/>`}
+ const s=selId&&data.find(q=>q.id===selId);if(s){const[x,y]=P(s.lat,s.lon);h+=`<circle class="sel" cx="${x}" cy="${y}" r="${(10+s.m**2*1.15).toFixed(1)}"/>`}
+ $("#map").innerHTML=h;$("#map").setAttribute("aria-label",t().listT);
+ $("#legend").innerHTML=[1,2.5,3.5,4.5,5.5].map((m,i)=>`<span><i style="background:${col(m)}"></i>${t().legend[i]}</span>`).join("")}
+
+function renderList(){
+ const qs=filtered(),el=$("#rows");
+ if(!qs.length){el.innerHTML=`<div class="empty">${t().noEv}</div>`}
+ else el.innerHTML=qs.slice(0,shown).map(q=>`<button type="button" class="row${q.id===selId?" on":""}" data-id="${esc(q.id)}"><span class="badge" style="background:${col(q.m)}">${fm(q.m)}</span><span><span class="p">${esc(place(q))}</span><br><span class="s">${when(q.t)} · ${t().depth.toLowerCase()} ${Math.round(q.d)} km${felt[q.id]!=null?` · <span class="ftag">${t().feltTag}</span>`:""}</span></span><span class="r">${ago(q.t)}<br>${Math.round(dist(city[1],city[2],q.lat,q.lon))} km ${t().fromYou} ${esc(city[0])}</span></button>`).join("")+(qs.length>shown?`<button type="button" class="more" id="more">${t().more} (${qs.length-shown})</button>`:"");
+ const m=$("#more");if(m)m.onclick=()=>{shown+=40;renderList()};
+ const now=Date.now(),days=Array.from({length:30},()=>({n:0,mx:0}));
+ for(const q of data){const i=29-Math.floor((now-q.t)/DAY);if(i>=0&&i<30&&q.m>=MMS[mm]){days[i].n++;days[i].mx=Math.max(days[i].mx,q.m)}}
+ const top=Math.max(1,...days.map(d=>d.n));
+ $("#days").innerHTML=days.map(d=>`<div class="${d.mx>=3?"hi":""}" style="height:${d.n/top*100}%" title="${d.n}"></div>`).join("");
+ const bins=[[0,2],[2,3],[3,4],[4,5],[5,10]],lim=now-PER[per],cnt=bins.map(b=>data.filter(q=>q.t>=lim&&q.m>=b[0]&&q.m<b[1]).length),mxc=Math.max(1,...cnt);
+ $("#dist").innerHTML=bins.map((b,i)=>`<div><span>${t().legend[i]}</span><i style="width:${Math.max(2,cnt[i]/mxc*100)}%;background:${col(b[0]+.5)}"></i><b>${cnt[i]}</b></div>`).join("")}
+
+function renderStatic(){
+ document.documentElement.lang=lang;
+ for(const el of document.querySelectorAll("[data-i]")){const v=t()[el.dataset.i];if(typeof v==="string")el.textContent=v}
+ $("#nav").innerHTML=["live","list","safety","history"].map((id,i)=>`<a href="#${id}">${t().nav[i]}</a>`).join("");
+ $("#lang").textContent=lang==="ro"?"English":"Română";
+ $("#lang").setAttribute("aria-label",lang==="ro"?"Switch to English":"Schimbă în română");
+ $("#per").innerHTML=t().per.map((p,i)=>`<button type="button" data-v="${i}" aria-pressed="${i===per}">${p}</button>`).join("");
+ $("#mm").innerHTML=MMS.map((m,i)=>`<button type="button" data-v="${i}" aria-pressed="${i===mm}">${i?m+"+":t().all}</button>`).join("");
+ $("#city").innerHTML=CITIES.slice().sort((a,b)=>a[0].localeCompare(b[0],"ro")).map(c=>`<option${c===city?" selected":""}>${esc(c[0])}</option>`).join("");
+ $("#tips").innerHTML=t().tips.map((g,i)=>`<div class="tip"><h3><span>${i+1}</span>${g[0]}</h3><ul>${g[1].map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+ $("#hist").innerHTML=HIST.map(h=>`<tr><td class="y">${h[0]}<br><small style="font:500 13px Inter;color:var(--mute)">${h[1]}</small></td><td class="n">${lang==="ro"?h[2]:h[3]}</td><td>${h[4]==="crustal"?(lang==="ro"?"superficial":"shallow"):h[4]}</td><td>${lang==="ro"?h[5]:h[6]}</td></tr>`).join("");
+ if(sample)$("#notice").textContent=t().sample}
+
+function render(){renderLatest();renderMap();renderList();
+ if(updated)$("#upd").textContent=`${t().updated} ${new Intl.DateTimeFormat(loc(),{hour:"2-digit",minute:"2-digit"}).format(updated)}`}
+function pick(id){selId=id;fOpen=false;render();if(window.innerWidth<900)$("#live").scrollIntoView()}
+
+$("#lang").onclick=()=>{lang=lang==="ro"?"en":"ro";put("lang",lang);renderStatic();render()};
+$("#per").onclick=e=>{const b=e.target.closest("button");if(!b)return;per=+b.dataset.v;put("per",per);shown=40;renderStatic();render()};
+$("#mm").onclick=e=>{const b=e.target.closest("button");if(!b)return;mm=+b.dataset.v;put("mm",mm);shown=40;renderStatic();render()};
+$("#city").onchange=e=>{city=CITIES.find(c=>c[0]===e.target.value)||CITIES[0];put("city",city[0]);render()};
+$("#refresh").onclick=load;
+$("#latest").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+ const q=(selId&&data.find(x=>x.id===selId))||data[0];
+ if(b.id==="back"){selId=null;fOpen=false;render();return}
+ if(b.dataset.lv!=null&&q){felt[q.id]=+b.dataset.lv;put("felt",JSON.stringify(felt));fOpen=false;render();return}
+ const f=b.dataset.f;if(f==="open"||f==="chg"){fOpen=true;renderLatest()}else if(f==="x"){fOpen=false;renderLatest()}});
+$("#map").onclick=e=>{const c=e.target.closest(".q");if(c)pick(c.dataset.id)};
+$("#rows").addEventListener("click",e=>{const r=e.target.closest(".row");if(r)pick(r.dataset.id)});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&updated&&Date.now()-updated>60e3)load()});
+setInterval(()=>{if(!document.hidden)load()},120e3);
+renderStatic();load();
+}
+</script>
+</body>
+</html>
