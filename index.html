@@ -247,9 +247,9 @@ const CITIES=[["București",44.43,26.10,1],["Cluj-Napoca",46.77,23.59,1],["Iași
 const RO=[[20.26,46.11],[20.76,45.75],[21.0,45.4],[21.48,45.18],[21.38,44.87],[21.65,44.66],[22.15,44.48],[22.47,44.7],[22.7,44.53],[22.45,44.3],[22.68,44.2],[22.97,43.85],[23.6,43.8],[24.2,43.68],[24.87,43.71],[25.37,43.63],[25.95,43.87],[26.5,44.05],[27.27,44.13],[27.7,43.97],[28.0,43.82],[28.58,43.74],[28.66,44.0],[28.78,44.35],[28.9,44.6],[29.1,44.78],[29.66,44.83],[29.66,45.21],[29.75,45.38],[29.4,45.44],[28.9,45.29],[28.72,45.22],[28.21,45.47],[28.08,45.9],[28.17,46.3],[28.1,46.75],[27.84,47.2],[27.4,47.6],[27.0,48.05],[26.62,48.26],[26.2,47.98],[25.6,47.93],[25.08,47.75],[24.6,47.95],[24.0,47.96],[23.5,48.0],[22.89,47.95],[22.3,47.73],[22.0,47.5],[21.9,47.35],[21.65,47.0],[21.4,46.7],[21.2,46.4],[20.75,46.24]];
 const T={
 ro:{h1:"Cutremure în România, în timp real",lead:"Date live de la Centrul Seismologic Euro-Mediteranean (EMSC), actualizate automat la fiecare 2 minute. Atinge un cutremur pe hartă sau în listă pentru detalii.",
-nav:["Live","Listă","Siguranță","Istoric"],latest:"Ultimul cutremur",selected:"Cutremur selectat",back:"Înapoi la ultimul",depth:"Adâncime",vr:"Vrancea · adâncime intermediară",c24:"cutremure în ultimele 24 h",c7:"cutremure în ultimele 7 zile",max30:"magnitudine maximă, 30 de zile",open:"Detalii la sursă",felt:"Am simțit acest cutremur",feltQ:"Cât de puternic l-ai simțit?",cancel:"Renunță",youFelt:"Ai raportat",change:"Schimbă",feltTag:"simțit de tine",feltNote:"Răspunsul tău rămâne salvat pe acest dispozitiv. Ca să-i ajuți pe seismologi, trimite-l și la EMSC (site sau aplicația LastQuake):",emsc:"Trimite raportul oficial la EMSC",lv:[["Abia perceptibil","Doar o vibrație slabă, observată de puțini"],["Ușor","Obiectele și geamurile au vibrat ușor"],["Moderat","Mulți l-au simțit, obiectele s-au mișcat"],["Puternic","Greu de stat în picioare, au căzut obiecte"],["Foarte puternic","Fisuri sau alte pagube la clădire"]],
+nav:["Live","Listă","Siguranță","Istoric"],latest:"Ultimul cutremur",selected:"Cutremur selectat",back:"Înapoi la ultimul",depth:"Adâncime",vr:"Vrancea · adâncime intermediară",c24:"cutremure în zonă, ultimele 24 h",c7:"cutremure în zonă, ultimele 7 zile",max30:"magnitudine maximă, 30 de zile",open:"Detalii la sursă",felt:"Am simțit acest cutremur",feltQ:"Cât de puternic l-ai simțit?",cancel:"Renunță",youFelt:"Ai raportat",change:"Schimbă",feltTag:"simțit de tine",feltNote:"Răspunsul tău rămâne salvat pe acest dispozitiv. Ca să-i ajuți pe seismologi, trimite-l și la EMSC (site sau aplicația LastQuake):",emsc:"Trimite raportul oficial la EMSC",lv:[["Abia perceptibil","Doar o vibrație slabă, observată de puțini"],["Ușor","Obiectele și geamurile au vibrat ușor"],["Moderat","Mulți l-au simțit, obiectele s-au mișcat"],["Puternic","Greu de stat în picioare, au căzut obiecte"],["Foarte puternic","Fisuri sau alte pagube la clădire"]],
 listT:"Toate cutremurele din zonă",period:"Perioadă",per:["24 h","7 zile","30 de zile"],minmag:"Magnitudine minimă",all:"Toate",city:"Orașul meu",refresh:"Actualizează",updated:"Actualizat la",loading:"Se încarcă…",
-noEv:"Niciun cutremur pentru filtrele alese. E o veste bună.",more:"Arată mai multe",fromYou:"de",daily:"Activitate zilnică, 30 de zile",d30ago:"acum 30 de zile",today:"azi",distT:"După magnitudine (perioada aleasă)",
+noEv:"Niciun cutremur pentru filtrele alese. E o veste bună.",more:"Arată mai multe",fromYou:"de",daily:"Cutremure pe zi, 30 de zile (roșu: M3+)",d30ago:"acum 30 de zile",today:"azi",distT:"După magnitudine (filtrele alese)",
 legend:["sub 2","2–3","3–4","4–5","5+"],vz:"Zona Vrancea",near:"lângă",of:"de",dirs:["N","NE","E","SE","S","SV","V","NV"],
 sample:"Date demonstrative: această previzualizare nu poate încărca date externe. Pe site-ul publicat, cutremurele se încarcă live de la EMSC (cu USGS ca rezervă).",
 err:"Nu am putut încărca date noi. Afișăm ultimele date disponibile.",newq:"Cutremur nou",
@@ -260,9 +260,9 @@ histT:"Marile cutremure din România",histL:"Cele mai puternice cutremure din Ro
 thY:"An",thM:"Magnitudine",thD:"Adâncime",thW:"Ce s-a întâmplat",
 srcT:"Surse de date",disc:"Seismograf nu este un sistem oficial de avertizare și nu poate prezice cutremure. Magnitudinile pot diferi ușor între agenții și se pot actualiza în primele minute. Pentru informații oficiale, urmăriți INFP (Institutul Național pentru Fizica Pământului), IGSU și alertele RO-ALERT."},
 en:{h1:"Earthquakes in Romania, in real time",lead:"Live data from the European-Mediterranean Seismological Centre (EMSC), refreshed automatically every 2 minutes. Tap any earthquake on the map or in the list for details.",
-nav:["Live","List","Safety","History"],latest:"Latest earthquake",selected:"Selected earthquake",back:"Back to latest",depth:"Depth",vr:"Vrancea · intermediate depth",c24:"earthquakes in the last 24 h",c7:"earthquakes in the last 7 days",max30:"highest magnitude, 30 days",open:"Details at source",felt:"I felt this earthquake",feltQ:"How strongly did you feel it?",cancel:"Cancel",youFelt:"You reported",change:"Change",feltTag:"felt by you",feltNote:"Your answer stays saved on this device. To help seismologists, also send it to EMSC (website or the LastQuake app):",emsc:"Send the official report to EMSC",lv:[["Barely noticeable","Only a faint vibration, noticed by few"],["Light","Objects and windows rattled slightly"],["Moderate","Many people felt it, objects moved"],["Strong","Hard to stand, objects fell"],["Very strong","Cracks or other damage to the building"]],
+nav:["Live","List","Safety","History"],latest:"Latest earthquake",selected:"Selected earthquake",back:"Back to latest",depth:"Depth",vr:"Vrancea · intermediate depth",c24:"earthquakes in the area, last 24 h",c7:"earthquakes in the area, last 7 days",max30:"highest magnitude, 30 days",open:"Details at source",felt:"I felt this earthquake",feltQ:"How strongly did you feel it?",cancel:"Cancel",youFelt:"You reported",change:"Change",feltTag:"felt by you",feltNote:"Your answer stays saved on this device. To help seismologists, also send it to EMSC (website or the LastQuake app):",emsc:"Send the official report to EMSC",lv:[["Barely noticeable","Only a faint vibration, noticed by few"],["Light","Objects and windows rattled slightly"],["Moderate","Many people felt it, objects moved"],["Strong","Hard to stand, objects fell"],["Very strong","Cracks or other damage to the building"]],
 listT:"All earthquakes in the area",period:"Period",per:["24 h","7 days","30 days"],minmag:"Minimum magnitude",all:"All",city:"My city",refresh:"Refresh",updated:"Updated at",loading:"Loading…",
-noEv:"No earthquakes match these filters. That's good news.",more:"Show more",fromYou:"from",daily:"Daily activity, 30 days",d30ago:"30 days ago",today:"today",distT:"By magnitude (selected period)",
+noEv:"No earthquakes match these filters. That's good news.",more:"Show more",fromYou:"from",daily:"Earthquakes per day, 30 days (red: M3+)",d30ago:"30 days ago",today:"today",distT:"By magnitude (selected filters)",
 legend:["under 2","2–3","3–4","4–5","5+"],vz:"Vrancea zone",near:"near",of:"of",dirs:["N","NE","E","SE","S","SW","W","NW"],
 sample:"Sample data: this preview can't load outside data. On the published site, earthquakes load live from EMSC (with USGS as a backup).",
 err:"Couldn't load new data. Showing the last data available.",newq:"New earthquake",
@@ -289,7 +289,7 @@ let mm=+(get("mm")||0);
 let felt={};try{felt=JSON.parse(get("felt")||"{}")||{}}catch(e){}
 let fOpen=false;
 let data=[],sample=false,selId=null,shown=40,updated=null,known=null;
-const DAY=864e5,PER=[DAY,7*DAY,30*DAY],MMS=[0,2,3,4];
+const DAY=864e5,PER=[DAY,7*DAY,30*DAY],MMS=[-99,2,3,4];
 const t=()=>T[lang],loc=()=>lang==="ro"?"ro-RO":"en-GB";
 const P=(lat,lon)=>[+((lon-B.w)*69.7).toFixed(1),+((B.n-lat)*100).toFixed(1)];
 const col=m=>m<2?"#8a96a3":m<3?"#e5a800":m<4?"#f07000":m<5?"#e0301e":"#9b0019";
@@ -297,7 +297,8 @@ const fm=(m,d=1)=>Number(m).toLocaleString(loc(),{minimumFractionDigits:d,maximu
 function dist(a1,o1,a2,o2){const r=Math.PI/180,dA=(a2-a1)*r,dO=(o2-o1)*r,h=Math.sin(dA/2)**2+Math.cos(a1*r)*Math.cos(a2*r)*Math.sin(dO/2)**2;return 12742*Math.asin(Math.sqrt(h))}
 function dir(a1,o1,a2,o2){const r=Math.PI/180,y=Math.sin((o2-o1)*r)*Math.cos(a2*r),x=Math.cos(a1*r)*Math.sin(a2*r)-Math.sin(a1*r)*Math.cos(a2*r)*Math.cos((o2-o1)*r);const b=(Math.atan2(y,x)/r+360)%360;return t().dirs[Math.round(b/45)%8]}
 function place(q){let best=CITIES[0],bd=1e9;for(const c of CITIES){const d=dist(c[1],c[2],q.lat,q.lon);if(d<bd){bd=d;best=c}}
- if(bd<5)return t().near+" "+best[0];return Math.round(bd)+" km "+dir(best[1],best[2],q.lat,q.lon)+" "+t().of+" "+best[0]}
+ if(bd<5)return t().near+" "+best[0];const rel=Math.round(bd)+" km "+dir(best[1],best[2],q.lat,q.lon)+" "+t().of+" "+best[0];
+ return bd>40&&q.reg&&!/romania/i.test(q.reg)?region(q.reg)+" · "+rel:rel}
 const isV=q=>q.lat>45.2&&q.lat<46.1&&q.lon>26&&q.lon<27.2&&q.d>=60;
 function ago(ts){const s=(Date.now()-ts)/1000,f=new Intl.RelativeTimeFormat(loc(),{numeric:"auto"});
  if(s<60)return f.format(0,"minute");if(s<3600)return f.format(-Math.round(s/60),"minute");if(s<86400)return f.format(-Math.round(s/3600),"hour");return f.format(-Math.round(s/86400),"day")}
@@ -306,14 +307,14 @@ const region=r=>r?r.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()):"";
 
 function tget(u){const c=new AbortController(),k=setTimeout(()=>c.abort(),12000);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(k))}
 async function emsc(){
- const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
- const r=await tget(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlat=${B.s}&maxlat=${B.n}&minlon=${B.w}&maxlon=${B.e}&start=${st}&limit=1500&orderby=time`);
+ const st=new Date(Date.now()-30*DAY).toISOString().slice(0,19);
+ const r=await tget(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlat=${B.s}&maxlat=${B.n}&minlon=${B.w}&maxlon=${B.e}&start=${st}&limit=5000&orderby=time`);
  if(r.status===204)return[];if(!r.ok)throw new Error("emsc");
  const j=await r.json();
- return j.features.map(f=>{const p=f.properties;let s=String(p.time);if(!/Z$|[+-]\d\d:?\d\d$/.test(s))s+="Z";
+ return j.features.map(f=>{const p=f.properties;let s=String(p.time).replace(" ","T").replace(/\.(\d+)/,(x,f)=>"."+(f+"00").slice(0,3));if(!/Z$|[+-]\d\d:?\d\d$/.test(s))s+="Z";
   return{id:p.unid,t:Date.parse(s),lat:+p.lat,lon:+p.lon,d:Math.abs(+p.depth||0),m:+p.mag,mt:p.magtype||"",reg:p.flynn_region||"",src:"EMSC",url:"https://www.seismicportal.eu/eventdetails.html?unid="+encodeURIComponent(p.unid)}})}
 async function usgs(){
- const st=new Date(Date.now()-31*DAY).toISOString().slice(0,19);
+ const st=new Date(Date.now()-30*DAY).toISOString().slice(0,19);
  const r=await tget(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${st}&minlatitude=${B.s}&maxlatitude=${B.n}&minlongitude=${B.w}&maxlongitude=${B.e}&orderby=time`);
  if(!r.ok)throw new Error("usgs");const j=await r.json();
  return j.features.map(f=>({id:f.id,t:f.properties.time,lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],d:Math.abs(f.geometry.coordinates[2]||0),m:+f.properties.mag,mt:f.properties.magType||"",reg:f.properties.place||"",src:"USGS",url:f.properties.url}))}
@@ -327,7 +328,7 @@ function demo(){let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647,out=[]
 async function load(){
  $("#upd").textContent=t().loading;let fresh=null;
  try{fresh=await emsc()}catch(e){try{fresh=await usgs()}catch(e2){}}
- if(fresh){fresh=fresh.filter(q=>isFinite(q.m)&&isFinite(q.lat)&&isFinite(q.t)).sort((a,b)=>b.t-a.t);
+ if(fresh){{const lim=Date.now()-30*DAY,seen=new Set();fresh=fresh.filter(q=>isFinite(q.m)&&isFinite(q.lat)&&isFinite(q.t)&&q.t>=lim&&q.t<=Date.now()+6e4&&!seen.has(q.id)&&seen.add(q.id)).sort((a,b)=>b.t-a.t)}
   if(known&&!sample){const nw=fresh.filter(q=>!known.has(q.id)&&q.m>=2.5);if(nw.length)toast(nw[0])}
   data=fresh;sample=false;known=new Set(data.map(q=>q.id));updated=Date.now();$("#notice").hidden=true}
  else if(!data.length){data=demo();sample=true;updated=Date.now();$("#notice").textContent=t().sample;$("#notice").hidden=false}
@@ -344,7 +345,7 @@ function renderLatest(){
  const now=Date.now(),c24=data.filter(q=>q.t>now-DAY).length,c7=data.filter(q=>q.t>now-7*DAY).length,mx=data.reduce((a,q)=>Math.max(a,q.m),0);
  const dc=Math.round(dist(city[1],city[2],q.lat,q.lon));
  el.innerHTML=`<div class="kicker"><span>${sel?t().selected:t().latest}</span>${sel?`<button type="button" id="back">${t().back}</button>`:""}</div>
- <div class="mag"><span class="num" style="color:${q.m>=3?col(q.m):""}">${fm(q.m)}</span><span>${esc(q.mt.toUpperCase()||"M")}</span></div>
+ <div class="mag"><span class="num" style="color:${col(q.m)}">${fm(q.m)}</span><span>${esc(q.mt.toUpperCase()||"M")}</span></div>
  <div><div class="place">${esc(place(q))}</div><div class="when">${ago(q.t)} · ${when(q.t)}</div></div>
  <div class="chips"><span class="chip">${t().depth} ${Math.round(q.d)} km</span><span class="chip">${dc} km ${t().fromYou} ${esc(city[0])}</span>${q.reg?`<span class="chip">${esc(region(q.reg))}</span>`:""}${isV(q)?`<span class="chip v">${t().vr}</span>`:""}</div>
  <svg class="trace" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="${pts}" vector-effect="non-scaling-stroke"/></svg>
@@ -375,12 +376,12 @@ function renderList(){
  if(!qs.length){el.innerHTML=`<div class="empty">${t().noEv}</div>`}
  else el.innerHTML=qs.slice(0,shown).map(q=>`<button type="button" class="row${q.id===selId?" on":""}" data-id="${esc(q.id)}"><span class="badge" style="background:${col(q.m)}">${fm(q.m)}</span><span><span class="p">${esc(place(q))}</span><br><span class="s">${when(q.t)} · ${t().depth.toLowerCase()} ${Math.round(q.d)} km${felt[q.id]!=null?` · <span class="ftag">${t().feltTag}</span>`:""}</span></span><span class="r">${ago(q.t)}<br>${Math.round(dist(city[1],city[2],q.lat,q.lon))} km ${t().fromYou} ${esc(city[0])}</span></button>`).join("")+(qs.length>shown?`<button type="button" class="more" id="more">${t().more} (${qs.length-shown})</button>`:"");
  const m=$("#more");if(m)m.onclick=()=>{shown+=40;renderList()};
- const now=Date.now(),days=Array.from({length:30},()=>({n:0,mx:0}));
- for(const q of data){const i=29-Math.floor((now-q.t)/DAY);if(i>=0&&i<30&&q.m>=MMS[mm]){days[i].n++;days[i].mx=Math.max(days[i].mx,q.m)}}
+ const now=Date.now(),dk=ts=>new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Bucharest"}).format(ts),keys=Array.from({length:30},(_,i)=>dk(now-(29-i)*DAY)),days=keys.map(()=>({n:0,mx:0}));
+ for(const q of data){const i=keys.indexOf(dk(q.t));if(i>=0&&q.m>=MMS[mm]){days[i].n++;days[i].mx=Math.max(days[i].mx,q.m)}}
  const top=Math.max(1,...days.map(d=>d.n));
- $("#days").innerHTML=days.map(d=>`<div class="${d.mx>=3?"hi":""}" style="height:${d.n/top*100}%" title="${d.n}"></div>`).join("");
- const bins=[[0,2],[2,3],[3,4],[4,5],[5,10]],lim=now-PER[per],cnt=bins.map(b=>data.filter(q=>q.t>=lim&&q.m>=b[0]&&q.m<b[1]).length),mxc=Math.max(1,...cnt);
- $("#dist").innerHTML=bins.map((b,i)=>`<div><span>${t().legend[i]}</span><i style="width:${Math.max(2,cnt[i]/mxc*100)}%;background:${col(b[0]+.5)}"></i><b>${cnt[i]}</b></div>`).join("")}
+ $("#days").innerHTML=days.map(d=>`<div class="${d.mx>=3?"hi":""}" style="height:${d.n/top*100}%" title="${keys[days.indexOf(d)]}: ${d.n}"></div>`).join("");
+ const bins=[[-9,2],[2,3],[3,4],[4,5],[5,99]],fq=filtered(),cnt=bins.map(b=>fq.filter(q=>q.m>=b[0]&&q.m<b[1]).length),mxc=Math.max(1,...cnt);
+ $("#dist").innerHTML=bins.map((b,i)=>`<div><span>${t().legend[i]}</span><i style="width:${Math.max(2,cnt[i]/mxc*100)}%;background:${col(Math.max(b[0],1)+.5)}"></i><b>${cnt[i]}</b></div>`).join("")}
 
 function renderStatic(){
  document.documentElement.lang=lang;
