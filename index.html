@@ -239,6 +239,9 @@ footer p{color:var(--mute);font-size:14px;max-width:80ch}
 
 <script>
 {
+const GC="cutremur-acum-rares";
+if(GC&&!/claude|localhost|^$/.test(location.hostname)){const s=document.createElement("script");s.async=true;s.src="https://gc.zgo.at/count.js";s.dataset.goatcounter=`https://${GC}.goatcounter.com/count`;document.head.appendChild(s)}
+function track(path,title){try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path,title,event:true})}catch(e){}}
 const B={s:43.3,n:48.6,w:19.8,e:30.4};
 const CITIES=[["București",44.43,26.10,1],["Cluj-Napoca",46.77,23.59,1],["Iași",47.16,27.59,1],["Timișoara",45.75,21.23,1],["Constanța",44.18,28.63,1],["Brașov",45.65,25.59,1],["Craiova",44.32,23.80,1],["Focșani",45.70,27.18,1],["Chișinău",47.01,28.86,1],["Galați",45.44,28.05,0],["Brăila",45.27,27.96,0],["Ploiești",44.94,26.03,0],["Oradea",47.07,21.92,0],["Sibiu",45.79,24.15,0],["Bacău",46.57,26.91,0],["Arad",46.18,21.31,0],["Pitești",44.86,24.87,0],["Buzău",45.15,26.82,0],["Suceava",47.65,26.25,0],["Baia Mare",47.66,23.58,0],["Târgu Mureș",46.54,24.56,0],["Târgu Jiu",45.04,23.27,0],["Drobeta-Turnu Severin",44.63,22.66,0],["Satu Mare",47.79,22.89,0],["Botoșani",47.75,26.67,0],["Tulcea",45.18,28.80,0],["Deva",45.88,22.91,0],["Râmnicu Vâlcea",45.10,24.37,0],["Piatra Neamț",46.93,26.37,0],["Nehoiu",45.42,26.30,0]];
 const RO=[[20.26,46.11],[20.76,45.75],[21.0,45.4],[21.48,45.18],[21.38,44.87],[21.65,44.66],[22.15,44.48],[22.47,44.7],[22.7,44.53],[22.45,44.3],[22.68,44.2],[22.97,43.85],[23.6,43.8],[24.2,43.68],[24.87,43.71],[25.37,43.63],[25.95,43.87],[26.5,44.05],[27.27,44.13],[27.7,43.97],[28.0,43.82],[28.58,43.74],[28.66,44.0],[28.78,44.35],[28.9,44.6],[29.1,44.78],[29.66,44.83],[29.66,45.21],[29.75,45.38],[29.4,45.44],[28.9,45.29],[28.72,45.22],[28.21,45.47],[28.08,45.9],[28.17,46.3],[28.1,46.75],[27.84,47.2],[27.4,47.6],[27.0,48.05],[26.62,48.26],[26.2,47.98],[25.6,47.93],[25.08,47.75],[24.6,47.95],[24.0,47.96],[23.5,48.0],[22.89,47.95],[22.3,47.73],[22.0,47.5],[21.9,47.35],[21.65,47.0],[21.4,46.7],[21.2,46.4],[20.75,46.24]];
@@ -352,7 +355,7 @@ function renderLatest(){
 
 function feltBox(q){
  const v=felt[q.id];
- if(v!=null&&!fOpen)return`<div class="felt done"><div class="top"><span>${t().youFelt}: <b>${t().lv[v][0]}</b></span><button type="button" data-f="chg">${t().change}</button></div><p>${t().feltNote}</p><a class="ev-link" href="https://www.emsc-csem.org" target="_blank" rel="noopener">${t().emsc} ↗</a></div>`;
+ if(v!=null&&!fOpen)return`<div class="felt done"><div class="top"><span>${t().youFelt}: <b>${t().lv[v][0]}</b></span><button type="button" data-f="chg">${t().change}</button></div><p>${t().feltNote}</p><a class="ev-link" data-t="emsc" href="https://www.emsc-csem.org" target="_blank" rel="noopener">${t().emsc} ↗</a></div>`;
  if(!fOpen)return`<button type="button" class="feltbtn" data-f="open">${t().felt}</button>`;
  return`<div class="felt"><div class="top"><span>${t().feltQ}</span><button type="button" data-f="x">${t().cancel}</button></div>${t().lv.map((l,i)=>`<button type="button" class="lv" data-lv="${i}"><i>${[0,1,2,3,4].map(k=>`<s class="${k<=i?"on":""}" style="height:${6+k*4}px"></s>`).join("")}</i><span><b>${l[0]}</b><small>${l[1]}</small></span></button>`).join("")}</div>`}
 function renderMap(){
@@ -401,10 +404,11 @@ $("#per").onclick=e=>{const b=e.target.closest("button");if(!b)return;per=+b.dat
 $("#mm").onclick=e=>{const b=e.target.closest("button");if(!b)return;mm=+b.dataset.v;put("mm",mm);shown=40;renderStatic();render()};
 $("#city").onchange=e=>{city=CITIES.find(c=>c[0]===e.target.value)||CITIES[0];put("city",city[0]);render()};
 $("#refresh").onclick=load;
-$("#latest").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+$("#latest").addEventListener("click",e=>{if(e.target.closest("[data-t=emsc]"))track("click/emsc-report","Trimis la EMSC");const b=e.target.closest("button");if(!b)return;
  const q=(selId&&data.find(x=>x.id===selId))||data[0];
  if(b.id==="back"){selId=null;fOpen=false;render();return}
- if(b.dataset.lv!=null&&q){felt[q.id]=+b.dataset.lv;put("felt",JSON.stringify(felt));fOpen=false;render();return}
+ if(b.dataset.lv!=null&&q){felt[q.id]=+b.dataset.lv;put("felt",JSON.stringify(felt));
+  {const lvEN=T.en.lv[felt[q.id]][0].toLowerCase().replace(/ /g,"-"),d=new Date(q.t).toISOString().slice(0,16).replace(/[-:T]/g,"");track(`felt/${d}-M${q.m.toFixed(1)}/${felt[q.id]+1}-${lvEN}`,`Simțit: M${q.m.toFixed(1)} · ${place(q)} · ${T.ro.lv[felt[q.id]][0]}`)}fOpen=false;render();return}
  const f=b.dataset.f;if(f==="open"||f==="chg"){fOpen=true;renderLatest()}else if(f==="x"){fOpen=false;renderLatest()}});
 $("#map").onclick=e=>{const c=e.target.closest(".q");if(c)pick(c.dataset.id)};
 $("#rows").addEventListener("click",e=>{const r=e.target.closest(".row");if(r)pick(r.dataset.id)});
